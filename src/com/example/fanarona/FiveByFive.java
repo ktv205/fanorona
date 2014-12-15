@@ -2,23 +2,25 @@ package com.example.fanarona;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.w3c.dom.Node;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.hardware.Camera.PreviewCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 public class FiveByFive extends Activity implements OnClickListener {
 	private int[] boardConfig = { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2, 1,
 			3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 };
-	private int[] blankSpaces = new int[10];
 	private Map<Integer, int[]> adjacent = new HashMap<Integer, int[]>();
 	private final static String TAG = "FiveByFive";
 	private ImageView i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13,
@@ -109,6 +111,15 @@ public class FiveByFive extends Activity implements OnClickListener {
 		adjacent.put(23, new int[] { 18, 22, 24 });
 		adjacent.put(24, new int[] { 19, 23, 25 });
 		adjacent.put(25, new int[] { 20, 24 });
+		Button button = (Button) findViewById(R.id.fivebyfive_play);
+		button.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				new FanaronaAsycTask().execute();
+
+			}
+		});
 
 	}
 
@@ -377,7 +388,17 @@ public class FiveByFive extends Activity implements OnClickListener {
 			} else if (secondAdjFlag == 1) {
 				Log.d(TAG, "seconAdjFalg->" + secondAdjFlag);
 				setImages(firstMove, secondMove, thirdMove);
+				if (winFlag == 0) {
+					new FanaronaAsycTask().execute();
+				} else if (winFlag == 1) {
+					Toast.makeText(this, "player has won", Toast.LENGTH_SHORT)
+							.show();
+				} else if (winFlag == 2) {
+					Toast.makeText(this, "app has won", Toast.LENGTH_SHORT)
+							.show();
+				}
 				new FanaronaAsycTask().execute();
+
 			}
 
 		}
@@ -609,5 +630,43 @@ public class FiveByFive extends Activity implements OnClickListener {
 			playerFlag = 0;
 			MoveFlag = 0;
 		}
+	}
+	public int alphaBeta(Node node, int depth, int alpha, int beta) {
+        if (winFlag==0) {
+            boolean playerWin = false;
+			int winRating = 0;
+			return playerWin ? winRating : -winRating;
+        } else if (depth <= 0) {
+            int nodeRating = 0;
+			return nodeRating;
+        }
+
+        List<Node> children = generateChildren(); // generates children. also rates them and applies move to copy of field. 
+
+        int currentPlayer = 0;
+		int ai=0;
+		if (currentPlayer == ai) { // ai tries to maximize the score
+            for (Node child : children) {
+                alpha = Math.max(alpha, alphaBeta(child, depth - 1, alpha, beta));
+
+                if (beta <= alpha) {
+                    break; // cutoff
+                }
+            }
+            return alpha;
+        } else { // enemy tries to minimize the score
+            for (Node child : children) {
+                beta = Math.min(beta, alphaBeta(child, depth - 1, alpha, beta));
+                if (beta <= alpha) {
+                    break; // cutoff
+                }
+            }
+            return beta;
+        }
+    }
+
+	private List	<Node> generateChildren() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

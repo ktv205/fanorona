@@ -106,6 +106,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="5by5" />
+        <Button 
+            android:id="@+id/main_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Let the app play first"/>
     </LinearLayout>
 
 </LinearLayout>

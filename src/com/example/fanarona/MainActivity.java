@@ -2,7 +2,10 @@ package com.example.fanarona;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.w3c.dom.Node;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -22,7 +25,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	private int[] boardConfig = { 0, 1, 1, 1, 1, 2, 3, 3, 3, 3 };
 	private int[] blankSpaces = new int[10];
 	private Map<Integer, int[]> adjacent = new HashMap<Integer, int[]>();
-	private Map<Integer, int[]> diagnol = new HashMap<Integer, int[]>();
+	
 	private final static String TAG = "MainActivity";
 	private ImageView i1, i2, i3, i4, i5, i6, i7, i8, i9;
 	int playerFlag = 0;
@@ -68,6 +71,15 @@ public class MainActivity extends Activity implements OnClickListener {
 			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(MainActivity.this, FiveByFive.class));
+
+			}
+		});
+		Button playButton = (Button) findViewById(R.id.main_play);
+		playButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				new FanaronaAsycTask().execute();
 
 			}
 		});
@@ -466,6 +478,48 @@ public class MainActivity extends Activity implements OnClickListener {
 			playerFlag = 0;
 			MoveFlag = 0;
 		}
+	}
+
+	public int alphaBeta(Node node, int depth, int alpha, int beta) {
+		if (winFlag == 0) {
+			boolean playerWin = false;
+			int winRating = 0;
+			return playerWin ? winRating : -winRating;
+		} else if (depth <= 0) {
+			int nodeRating = 0;
+			return nodeRating;
+		}
+
+		List<Node> children = generateChildren(); // generates children. also
+													// rates them and applies
+													// move to copy of field.
+
+		int currentPlayer = 0;
+		int ai = 0;
+		if (currentPlayer == ai) { // ai tries to maximize the score
+			for (Node child : children) {
+				alpha = Math.max(alpha,
+						alphaBeta(child, depth - 1, alpha, beta));
+
+				if (beta <= alpha) {
+					break; // cutoff
+				}
+			}
+			return alpha;
+		} else { // enemy tries to minimize the score
+			for (Node child : children) {
+				beta = Math.min(beta, alphaBeta(child, depth - 1, alpha, beta));
+				if (beta <= alpha) {
+					break; // cutoff
+				}
+			}
+			return beta;
+		}
+	}
+
+	private List<Node> generateChildren() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
