@@ -1,9 +1,11 @@
 package com.example.fanarona;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -113,10 +115,14 @@ public class MainActivity extends Activity implements OnClickListener {
 		int firstAdjFlag = 0;
 		int secondAdjFlag = 0;
 		int difference;
-		ImageView firstImage = (ImageView) findViewById(R.id.image + firstMove);
-		ImageView secondImage = (ImageView) findViewById(R.id.image
-				+ secondMove);
-		int third;
+		Log.d(TAG, "firstMove->" + firstMove);
+		Log.d(TAG, "firstMove->" + secondMove);
+		int firstId = getResources().getIdentifier("image" + firstMove, "id",
+				this.getPackageName());
+		int secondId = getResources().getIdentifier("image" + secondMove, "id",
+				this.getPackageName());
+		ImageView firstImage = (ImageView) findViewById(firstId);
+		ImageView secondImage = (ImageView) findViewById(secondId);
 		int[] adjOne = adjacent.get(firstMove);
 		int[] adjTwo = adjacent.get(secondMove);
 		for (int i = 0; i < adjOne.length; i++) {
@@ -129,11 +135,14 @@ public class MainActivity extends Activity implements OnClickListener {
 			difference = firstMove - secondMove;
 			for (int i = 0; i < adjTwo.length; i++) {
 				if (boardConfig[adjTwo[i]] == 1) {
-					ImageView thirdImage = (ImageView) findViewById(R.id.image
-							+ adjTwo[i]);
+					Log.d(TAG, "thirdMove->" + adjTwo[i]);
+					int thirdId = getResources().getIdentifier(
+							"image" + adjTwo[i], "id", this.getPackageName());
+					ImageView thirdImage = (ImageView) findViewById(thirdId);
 					Log.d(TAG,
 							"inFigureOutConfig->attack->figuring out third move");
 					if (adjTwo[i] == firstMove - (2 * difference)) {
+
 						Log.d(TAG, "inFigureOutConfig->figured out third move");
 
 						firstImage.setImageResource(R.drawable.blue);
@@ -155,12 +164,14 @@ public class MainActivity extends Activity implements OnClickListener {
 			}
 			if (secondAdjFlag == 0) {
 				difference = firstMove - secondMove;
-				for (int i = 0; i < adjOne[i]; i++) {
+				for (int i = 0; i < adjOne.length; i++) {
 					if (secondMove != adjOne[i]) {
 						if (boardConfig[adjOne[i]] == 1) {
 							if (firstMove + difference == adjOne[i]) {
-								ImageView thirdImage = (ImageView) findViewById(R.id.image
-										+ adjTwo[i]);
+								int thirdId = getResources().getIdentifier(
+										"image" + adjOne[i], "id",
+										this.getPackageName());
+								ImageView thirdImage = (ImageView) findViewById(thirdId);
 								Log.d(TAG,
 										"inFigureOutConfig->retrive->figured out third move");
 								firstImage.setImageResource(R.drawable.blue);
@@ -173,6 +184,107 @@ public class MainActivity extends Activity implements OnClickListener {
 					}
 				}
 			}
+		}
+	}
+
+	public class FanaronaAsycTask extends
+			AsyncTask<Void, Void, ArrayList<Integer>> {
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+		}
+
+		@Override
+		protected ArrayList<Integer> doInBackground(Void... params) {
+			ArrayList<Integer> black = new ArrayList<Integer>();
+			ArrayList<Integer> blue = new ArrayList<Integer>();
+			ArrayList<Integer> red = new ArrayList<Integer>();
+			for (int i = 0; i < boardConfig.length; i++) {
+				if (boardConfig[i] == 1) {
+					red.add(i);
+				} else if (boardConfig[i] == 2) {
+					blue.add(i);
+				} else if (boardConfig[i] == 3) {
+					black.add(i);
+				}
+			}
+			int firstMove = 0;
+			int secondMove = 0;
+			int thirdMove = 0;
+			int redPosition = 0;
+			int firstMoveFlag = 0;
+			int secondMoveFlag = 0;
+			int thirdMoveFlag = 0;
+			while (redPosition != red.size()) {
+				firstMove = red.get(redPosition);
+				firstMoveFlag = 1;
+				int[] firstAdj = adjacent.get(red.get(redPosition));
+				int i = 0;
+				while (i < firstAdj.length) {
+					if (boardConfig[firstAdj[i]] == 2) {
+						secondMove = firstAdj[i];
+						secondMoveFlag = 1;
+						int[] secondAdj = adjacent.get(secondMove);
+						int difference = firstMove - secondMove;
+						for (int j = 0; j < secondAdj.length; j++) {
+							if (boardConfig[secondAdj[j]] == 3) {
+								Log.d(TAG, "thirdMove->" + secondAdj[j]);
+								thirdMove = secondAdj[j];
+								Log.d(TAG,
+										"inFigureOutConfig->attack->figuring out third move");
+								if (secondAdj[j] == firstMove
+										- (2 * difference)) {
+									thirdMove = secondAdj[j];
+									thirdMoveFlag = 1;
+									Log.d(TAG,
+											"inFigureOutConfig->figured out third move");
+
+								} else if (secondAdj[j] == firstMove
+										+ (2 * difference)) {
+									thirdMoveFlag = 1;
+									thirdMove = secondAdj[j];
+									Log.d(TAG,
+											"inFigureOutConfig->atttack->figured out third move");
+
+								}
+							}
+						}
+						if (thirdMoveFlag == 0) {
+							difference = firstMove - secondMove;
+							for (int j = 0; j < firstAdj.length; j++) {
+								if (secondMove != firstAdj[j]) {
+									if (boardConfig[firstAdj[j]] == 1) {
+										if (firstMove + difference == firstAdj[j]) {
+											thirdMove = firstAdj[i];
+											thirdMoveFlag = 1;
+										}
+									}
+								}
+							}
+						}
+
+					}
+					if (secondMoveFlag == 0) {
+						i++;
+					} else if (thirdMoveFlag == 0) {
+						i++;
+					} else if (thirdMoveFlag == 1) {
+						i = firstAdj.length;
+					}
+				}
+				if (thirdMoveFlag == 1) {
+					redPosition = red.size();
+				} else {
+					redPosition++;
+				}
+			}
+			ArrayList<Integer> finalList = new ArrayList<Integer>();
+			finalList.add(firstMove);
+			finalList.add(secondMove);
+			finalList.add(thirdMove);
+			return finalList;
 		}
 
 	}
