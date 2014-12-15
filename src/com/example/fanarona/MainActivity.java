@@ -6,11 +6,13 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -60,6 +62,15 @@ public class MainActivity extends Activity implements OnClickListener {
 		adjacent.put(7, new int[] { 4, 5, 8 });
 		adjacent.put(8, new int[] { 5, 7, 9 });
 		adjacent.put(9, new int[] { 5, 6, 8 });
+		Button submitButton = (Button) findViewById(R.id.submit);
+		submitButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(MainActivity.this, FiveByFive.class));
+
+			}
+		});
 
 	}
 
@@ -194,13 +205,14 @@ public class MainActivity extends Activity implements OnClickListener {
 						playerFlag = 1;
 						Log.d(TAG, "figure out computer move please");
 						checkForWin();
-						if(winFlag==0){
+						if (winFlag == 0) {
 							new FanaronaAsycTask().execute();
-						}
-						else if (winFlag == 1) {
-							Toast.makeText(this, "player has won", Toast.LENGTH_SHORT).show();
+						} else if (winFlag == 1) {
+							Toast.makeText(this, "player has won",
+									Toast.LENGTH_SHORT).show();
 						} else if (winFlag == 2) {
-							Toast.makeText(this, "app has won", Toast.LENGTH_SHORT).show();
+							Toast.makeText(this, "app has won",
+									Toast.LENGTH_SHORT).show();
 						}
 						i = adjTwo.length;
 					} else if (adjTwo[i] == firstMove + (2 * difference)) {
@@ -220,13 +232,14 @@ public class MainActivity extends Activity implements OnClickListener {
 						playerFlag = 1;
 						Log.d(TAG, "figure out computer move please");
 						checkForWin();
-						if(winFlag==0){
+						if (winFlag == 0) {
 							new FanaronaAsycTask().execute();
-						}
-						else if (winFlag == 1) {
-							Toast.makeText(this, "player has won", Toast.LENGTH_SHORT).show();
+						} else if (winFlag == 1) {
+							Toast.makeText(this, "player has won",
+									Toast.LENGTH_SHORT).show();
 						} else if (winFlag == 2) {
-							Toast.makeText(this, "app has won", Toast.LENGTH_SHORT).show();
+							Toast.makeText(this, "app has won",
+									Toast.LENGTH_SHORT).show();
 						}
 						i = adjTwo.length;
 					}
@@ -259,16 +272,16 @@ public class MainActivity extends Activity implements OnClickListener {
 
 								secondAdjFlag = 1;
 								playerFlag = 1;
-								Log.d(TAG,
-										"figure out computer move please");
+								Log.d(TAG, "figure out computer move please");
 								checkForWin();
-								if(winFlag==0){
+								if (winFlag == 0) {
 									new FanaronaAsycTask().execute();
-								}
-								else if (winFlag == 1) {
-									Toast.makeText(this, "player has won", Toast.LENGTH_SHORT).show();
+								} else if (winFlag == 1) {
+									Toast.makeText(this, "player has won",
+											Toast.LENGTH_SHORT).show();
 								} else if (winFlag == 2) {
-									Toast.makeText(this, "app has won", Toast.LENGTH_SHORT).show();
+									Toast.makeText(this, "app has won",
+											Toast.LENGTH_SHORT).show();
 								}
 								i = adjOne.length;
 							}
@@ -287,15 +300,16 @@ public class MainActivity extends Activity implements OnClickListener {
 				playerFlag = 1;
 				secondAdjFlag = 1;
 				checkForWin();
-				if(winFlag==0){
+				if (winFlag == 0) {
 					new FanaronaAsycTask().execute();
-				}
-				else if (winFlag == 1) {
-					Toast.makeText(this, "player has won", Toast.LENGTH_SHORT).show();
+				} else if (winFlag == 1) {
+					Toast.makeText(this, "player has won", Toast.LENGTH_SHORT)
+							.show();
 				} else if (winFlag == 2) {
-					Toast.makeText(this, "app has won", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, "app has won", Toast.LENGTH_SHORT)
+							.show();
 				}
-				
+
 			}
 		}
 	}
@@ -377,13 +391,13 @@ public class MainActivity extends Activity implements OnClickListener {
 						}
 						if (thirdMoveFlag == 0) {
 							j = 0;
-							while (j < secondAdj.length) {
+							while (j < firstAdj.length) {
 								if (secondMove != firstAdj[j]) {
 									if (boardConfig[firstAdj[j]] == 3) {
 										if (firstMove + difference == firstAdj[j]) {
 											Log.d(TAG,
 													"figured out third move-> retrive->"
-															+ secondAdj[j]);
+															+ firstAdj[j]);
 											thirdMove = firstAdj[j];
 											thirdMoveFlag = 1;
 											j = secondAdj.length;
