@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.fanarona.R;
 
@@ -84,34 +85,63 @@ public class MainActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		// int id = v.getId();
 		checkForWin();
-		String resourceName = getResources().getResourceName(v.getId());
-		Log.d(TAG, "onClick->resourceName->" + resourceName);
-		int resourceNumber = Integer.valueOf(resourceName
-				.replaceAll("\\D+", ""));
-		Log.d(TAG, "onClick->resourceName->" + resourceNumber);
+		if (winFlag == 0) {
+			String resourceName = getResources().getResourceName(v.getId());
+			Log.d(TAG, "onClick->resourceName->" + resourceName);
+			int resourceNumber = Integer.valueOf(resourceName.replaceAll(
+					"\\D+", ""));
+			Log.d(TAG, "onClick->resourceName->" + resourceNumber);
 
-		if (playerFlag == 0) {
-			Log.d(TAG, "onClick->playerFlag==0");
-			if (MoveFlag == 0) {
-				Log.d(TAG, "onClick->MoveFlag==0");
-				if (boardConfig[resourceNumber] == 3) {
-					Log.d(TAG, "player selected his coin");
-					firstMove = resourceNumber;
-					MoveFlag = 1;
+			if (playerFlag == 0) {
+				Log.d(TAG, "onClick->playerFlag==0");
+				if (MoveFlag == 0) {
+					Log.d(TAG, "onClick->MoveFlag==0");
+					if (boardConfig[resourceNumber] == 3) {
+						Log.d(TAG, "player selected his coin");
+						firstMove = resourceNumber;
+						MoveFlag = 1;
+					}
+
+				} else if (MoveFlag == 1) {
+					if (boardConfig[resourceNumber] == 2) {
+						secondMove = resourceNumber;
+						figureOutConfig();
+
+					}
 				}
 
-			} else if (MoveFlag == 1) {
-				if (boardConfig[resourceNumber] == 2) {
-					secondMove = resourceNumber;
-					figureOutConfig();
-
-				}
 			}
-
+		} else if (winFlag == 1) {
+			Toast.makeText(this, "player has won", Toast.LENGTH_SHORT).show();
+		} else if (winFlag == 2) {
+			Toast.makeText(this, "app has won", Toast.LENGTH_SHORT).show();
 		}
 	}
-	public void checkForWin(){
-		
+
+	public void checkForWin() {
+		ArrayList<Integer> black = new ArrayList<Integer>();
+		ArrayList<Integer> blue = new ArrayList<Integer>();
+		ArrayList<Integer> red = new ArrayList<Integer>();
+		for (int i = 0; i < boardConfig.length; i++) {
+			Log.d(TAG, "doInBackBround->boardConfig->" + i + "->"
+					+ boardConfig[i]);
+		}
+		for (int i = 0; i < boardConfig.length; i++) {
+			if (boardConfig[i] == 1) {
+				red.add(i);
+			} else if (boardConfig[i] == 2) {
+				blue.add(i);
+			} else if (boardConfig[i] == 3) {
+				black.add(i);
+			}
+		}
+		if (red.size() == 0) {
+			winFlag = 1;
+		} else if (black.size() == 0) {
+			winFlag = 2;
+		} else {
+			winFlag = 0;
+		}
 	}
 
 	public void figureOutConfig() {
@@ -162,8 +192,16 @@ public class MainActivity extends Activity implements OnClickListener {
 						}
 						secondAdjFlag = 1;
 						playerFlag = 1;
-						Log.d(TAG, "figure out fucking computer move please");
-						new FanaronaAsycTask().execute();
+						Log.d(TAG, "figure out computer move please");
+						checkForWin();
+						if(winFlag==0){
+							new FanaronaAsycTask().execute();
+						}
+						else if (winFlag == 1) {
+							Toast.makeText(this, "player has won", Toast.LENGTH_SHORT).show();
+						} else if (winFlag == 2) {
+							Toast.makeText(this, "app has won", Toast.LENGTH_SHORT).show();
+						}
 						i = adjTwo.length;
 					} else if (adjTwo[i] == firstMove + (2 * difference)) {
 						Log.d(TAG,
@@ -180,8 +218,16 @@ public class MainActivity extends Activity implements OnClickListener {
 						}
 						secondAdjFlag = 1;
 						playerFlag = 1;
-						Log.d(TAG, "figure out fucking computer move please");
-						new FanaronaAsycTask().execute();
+						Log.d(TAG, "figure out computer move please");
+						checkForWin();
+						if(winFlag==0){
+							new FanaronaAsycTask().execute();
+						}
+						else if (winFlag == 1) {
+							Toast.makeText(this, "player has won", Toast.LENGTH_SHORT).show();
+						} else if (winFlag == 2) {
+							Toast.makeText(this, "app has won", Toast.LENGTH_SHORT).show();
+						}
 						i = adjTwo.length;
 					}
 				}
@@ -214,8 +260,16 @@ public class MainActivity extends Activity implements OnClickListener {
 								secondAdjFlag = 1;
 								playerFlag = 1;
 								Log.d(TAG,
-										"figure out fucking computer move please");
-								new FanaronaAsycTask().execute();
+										"figure out computer move please");
+								checkForWin();
+								if(winFlag==0){
+									new FanaronaAsycTask().execute();
+								}
+								else if (winFlag == 1) {
+									Toast.makeText(this, "player has won", Toast.LENGTH_SHORT).show();
+								} else if (winFlag == 2) {
+									Toast.makeText(this, "app has won", Toast.LENGTH_SHORT).show();
+								}
 								i = adjOne.length;
 							}
 						}
@@ -232,7 +286,16 @@ public class MainActivity extends Activity implements OnClickListener {
 				boardConfig[secondMove] = 3;
 				playerFlag = 1;
 				secondAdjFlag = 1;
-				new FanaronaAsycTask().execute();
+				checkForWin();
+				if(winFlag==0){
+					new FanaronaAsycTask().execute();
+				}
+				else if (winFlag == 1) {
+					Toast.makeText(this, "player has won", Toast.LENGTH_SHORT).show();
+				} else if (winFlag == 2) {
+					Toast.makeText(this, "app has won", Toast.LENGTH_SHORT).show();
+				}
+				
 			}
 		}
 	}
